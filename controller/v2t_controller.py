@@ -22,7 +22,7 @@ CHINESE_PROMPT = "这是个案例，请按照我的想法完成转译"
 MODEL_HOME = USER_HOME + SysUtil.file_separator() + ".cache/v2t2v"
 GPU_SPEED_UP = False
 
-model = whisper.load_model("medium", download_root=MODEL_HOME, in_memory=True)
+model = whisper.load_model("tiny", download_root=MODEL_HOME, in_memory=True)
 if torch.cuda.is_available():
     model.cuda()
     GPU_SPEED_UP = True
