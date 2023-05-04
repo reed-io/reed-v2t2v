@@ -195,6 +195,10 @@ class FileUtil:
                 file_bytes[8] == 0x4d and file_bytes[9] == 0x34 and file_bytes[10] == 0x41 and \
                 file_bytes[11] == 0x20:
             return True
+        elif file_bytes[4] == 0x66 and file_bytes[5] == 0x74 and file_bytes[6] == 0x79 and file_bytes[7] == 0x70 and \
+                file_bytes[8] == 0x6d and file_bytes[9] == 0x70 and file_bytes[10] == 0x34 and \
+                file_bytes[11] == 0x32:   # huawei mobile record a mpeg4 video as audio
+            return True
         else:
             return False
 
