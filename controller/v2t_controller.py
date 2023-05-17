@@ -1,4 +1,5 @@
 import logging
+import sys
 
 import torch.cuda
 import whisper
@@ -22,11 +23,21 @@ CHINESE_PROMPT = "这是个案例，请按照我的想法完成转译"
 MODEL_HOME = USER_HOME + SysUtil.file_separator() + ".cache/v2t2v"
 GPU_SPEED_UP = False
 
-model = whisper.load_model("tiny", download_root=MODEL_HOME, in_memory=True)
+module = SysUtil.get_os_env("V2T_MODULE")
+if StringUtil.isEmpty(module):
+    logging.error("can not find V2T_MODULE in os env")
+    sys.exit(0)
+
+model = whisper.load_model(module, download_root=MODEL_HOME, in_memory=True)
 if torch.cuda.is_available():
     model.cuda()
     GPU_SPEED_UP = True
 
+
+@v2t.get("/module", tags=["查询当前module"])
+async def get_current_module():
+    result = ReedResult.get(ReedV2T2VErrorCode.SUCCESS, module)
+    return result
 
 @v2t.post("/", tags=["语音转文字"])
 async def convert_voice_to_text(file: UploadFile = File(...)):

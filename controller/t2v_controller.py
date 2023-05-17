@@ -1,4 +1,8 @@
 import logging
+import os.path
+import threading
+import time
+
 import edge_tts
 import pyttsx3
 from fastapi import APIRouter, Form, Request
@@ -118,7 +122,7 @@ async def convert_text_to_voice_edge_tts(text: str = Form(None), speed_rate: int
 
 
 @t2v.post(path="/v2", tags=["文字转语音"])
-async def convert_text_to_voice_pyttsx3(text: str = Form(None), speed_rate: int = Form(0), volume_rate: int = Form(0),
+def convert_text_to_voice_pyttsx3(text: str = Form(None), speed_rate: int = Form(0), volume_rate: int = Form(0),
                                 audio_type: str = Form("mp3")):
     if StringUtil.isEmpty(text):
         logging.warning(f"parameter error: text is empty!")
@@ -146,9 +150,15 @@ async def convert_text_to_voice_pyttsx3(text: str = Form(None), speed_rate: int 
     engine.setProperty('volume', 1.0)
     engine.setProperty('voice', "zh")
     t1 = TimeUtil.unix_now()
-    engine.save_to_file(text=text, filename=USER_HOME + SysUtil.file_separator() + filename)
+    file_path = USER_HOME + SysUtil.file_separator() + filename
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    engine.save_to_file(text=text, filename=file_path)
     t2 = TimeUtil.unix_now()
     logging.debug(f"t2v cost: {t2 - t1} ms")
     engine.runAndWait()
     engine.stop()
-    return FileResponse(filename=filename, path=USER_HOME + SysUtil.file_separator() + filename)
+    while not os.path.exists(file_path):  # 临时方案
+        logging.debug("file not ready")
+        time.sleep(0.1)
+    return FileResponse(filename=filename, path=file_path)

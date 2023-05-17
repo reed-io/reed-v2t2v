@@ -18,10 +18,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from controller.t2v_controller import t2v as t2v_router
 from controller.v2t_controller import v2t as v2t_router
+from controller.health_controller import health
 
 ReedV2T2V = FastAPI(title="ReedV2T2V")
 ReedV2T2V.include_router(t2v_router, prefix="/t2v")
 ReedV2T2V.include_router(v2t_router, prefix="/v2t")
+ReedV2T2V.include_router(health, prefix="/health")
 # ReedScheduler.include_router(test_router, prefix="/test")
 # ReedScheduler.include_router(interval_router, prefix="/interval")
 # ReedScheduler.include_router(datetime_router, prefix="/datetime")
