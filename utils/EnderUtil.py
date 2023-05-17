@@ -49,7 +49,7 @@ class TimeUtil(object):
 
     @staticmethod
     def now() -> str:
-        return datetime.now()
+        return datetime.now().__str__()
 
     @staticmethod
     def today() -> datetime:
